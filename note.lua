@@ -95,7 +95,7 @@ function Main:HighlightId(id)
     if isself ~= nil and plrname ~= nil and isself ~= "Default" then
     local high
     id.Transparency = 0
-    if isself == true then
+    if isself == true and Main.HighlightSelfId then
         high = Internal:GetHighlight("Your Id")
         high.Adornee = id
         for property, value in pairs(Main.SelfIdProperties) do
@@ -104,7 +104,7 @@ function Main:HighlightId(id)
         if Main.ShowIdNames then
             Internal:Text(id, true, "Your Id")
         end
-    else
+    elseif isself == false and main.HighlightOtherId then
         high = Internal:GetHighlight(plrname .. "'s Id")
         high.Adornee = id
         for property, value in pairs(Main.OtherIdProperties) do
@@ -129,7 +129,7 @@ function Internal.DoYourThing(map)
                 if sui.Enabled == false and GameSettings.GamePhase.Value == "IdScatter" then
                     id.Transparency = 1
                     local closest = Internal:GetClosestToTakenId(id.Position)
-                    if closest then
+                    if closest and Main.HighlightSuspectedKiras then
                         Main:HighlightSuspectedKira(closest)
                     end
                 else
