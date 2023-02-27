@@ -58,7 +58,14 @@ function Internal:IsSelfId(id)
         img = string.gsub(img, "rbxthumb://type=AvatarHeadShot&id=", "")
         img = string.gsub(img, "&w=420&h=420", "")
         img = tonumber(img)
-        return (game.Players.LocalPlayer.UserId == img), game.Players:GetNameFromUserIdAsync(img)
+        local nm
+        if Main.UseDisplayNames then
+            local infos = game:GetService("UserService"):GetUserInfosByUserIdsAsync({img})
+            nm = infos.DisplayName
+        else
+            nm = game.Players:GetNameFromUserIdAsync(img)
+        end
+        return (game.Players.LocalPlayer.UserId == img), nm
     end
     return
 end
@@ -87,7 +94,7 @@ function Main:HighlightSuspectedKira(plr)
     end
     if Main.OverheadName then
         local head = plr:WaitForChild("Head")
-        Internal:Text(head, false, plr.Name)
+        if Main.UseDisplayNames then Internal:Text(head, false, plr.DisplayName) else Internal:Text(head, false, plr.Name) end
     end
 end
 function Main:HighlightId(id)
