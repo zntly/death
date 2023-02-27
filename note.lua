@@ -61,7 +61,8 @@ function Internal:IsSelfId(id)
         local nm
         if Main.UseDisplayNames then
             local infos = game:GetService("UserService"):GetUserInfosByUserIdsAsync({img})
-            nm = infos.DisplayName
+            nm = (infos[1]).DisplayName
+            print(nm)
         else
             nm = game.Players:GetNameFromUserIdAsync(img)
         end
@@ -111,7 +112,7 @@ function Main:HighlightId(id)
         if Main.ShowIdNames then
             Internal:Text(id, true, "Your Id")
         end
-    elseif isself == false and main.HighlightOtherId then
+    elseif isself == false and Main.HighlightOtherId then
         high = Internal:GetHighlight(plrname .. "'s Id")
         high.Adornee = id
         for property, value in pairs(Main.OtherIdProperties) do
