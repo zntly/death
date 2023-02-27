@@ -94,7 +94,7 @@ function Main:HighlightSuspectedKira(plr)
     end
     if Main.OverheadName then
         local head = plr:WaitForChild("Head")
-        if Main.UseDisplayNames then Internal:Text(head, false, plr.DisplayName) else Internal:Text(head, false, plr.Name) end
+        if Main.UseDisplayNames then Internal:Text(head, false, game.Players:GetPlayerFromCharacter(plr).DisplayName) else Internal:Text(head, false, plr.Name) end
     end
 end
 function Main:HighlightId(id)
