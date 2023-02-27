@@ -10,9 +10,10 @@ function Internal:GetHighlight(obj)
     high.Enabled = true
     return high
 end
-function Internal:Text(obj, isid, tname)
+function Internal:Text(obj, isid, tname, def)
     local ESPholder = game.CoreGui:FindFirstChild("TextHolder") or Instance.new("Folder", game.CoreGui)
     ESPholder.Name = "TextHolder"
+    if ESPholder:FindFirstChild(tname) then ESPholder:FindFirstChild(tname):Destroy() end
     local BillboardGui = Instance.new("BillboardGui")
 	local TextLabel = Instance.new("TextLabel")
 	BillboardGui.Adornee = obj
@@ -39,9 +40,14 @@ function Internal:Text(obj, isid, tname)
 	    TextLabel.Position = UDim2.new(0, 0, 0, -25)
 	    if tname == "Your Id" then TextLabel.TextColor3 = Main.SelfIdProperties.FillColor else TextLabel.TextColor3 = Main.OtherIdProperties.FillColor end
 	else
+	    if not def then
 	    TextLabel.Text = tname .. " | Suspected Kira"
+	    TextLabel.TextColor3 = Main.SuspectedKiraProperties.FillColor
+	    else
+	    TextLabel.Text = tname .. " | Definitely Kira"
+	    TextLabel.TextColor3 = Main.DefiniteKiraProperties.FillColor
+	    end
 	    BillboardGui.StudsOffset = Vector3.new(0, 1, 0)
-	    TextLabel.TextColor3 = Color3.new(1, 0, 0)
 	    TextLabel.Position = UDim2.new(0, 0, 0, -50)
 	    TextLabel.TextSize = 20
 	end
@@ -87,15 +93,25 @@ function Internal:GetClosestToTakenId(Position)
     end
     return Closest
 end
-function Main:HighlightSuspectedKira(plr)
+function Main:HighlightSuspectedKira(plr, def)
     local high = Internal:GetHighlight(plr.Name)
     high.Adornee = plr
+    if not def then
     for property, value in pairs(Main.SuspectedKiraProperties) do
         high[property] = value
     end
     if Main.OverheadName then
         local head = plr:WaitForChild("Head")
         if Main.UseDisplayNames then Internal:Text(head, false, game.Players:GetPlayerFromCharacter(plr).DisplayName) else Internal:Text(head, false, plr.Name) end
+    end
+    else
+    for property, value in pairs(Main.DefiniteKiraProperties) do
+        high[property] = value
+    end
+    if Main.OverheadName then
+        local head = plr:WaitForChild("Head")
+        if Main.UseDisplayNames then Internal:Text(head, false, game.Players:GetPlayerFromCharacter(plr).DisplayName, true) else Internal:Text(head, false, plr.Name, true) end
+    end
     end
 end
 function Main:HighlightId(id)
@@ -127,6 +143,7 @@ end
 function Internal.DoYourThing(map)
     task.wait()
     if map.Name == "Map" and not game.Players:GetPlayerFromCharacter(map) then -- Avoiding the "edgiest" of edge cases in which a player named Map joins the game
+    local defkiras = {}
     local connections = {}
     local function DoStuffWithIds(id)
         task.wait()
@@ -137,7 +154,7 @@ function Internal.DoYourThing(map)
                 if sui.Enabled == false and GameSettings.GamePhase.Value == "IdScatter" then
                     id.Transparency = 1
                     local closest = Internal:GetClosestToTakenId(id.Position)
-                    if closest and Main.HighlightSuspectedKiras then
+                    if closest and Main.HighlightSuspectedKiras and not table.find(defkiras, closest) and closest ~= game.Players.LocalPlayer.Character then
                         Main:HighlightSuspectedKira(closest)
                     end
                 else
@@ -166,6 +183,20 @@ function Internal.DoYourThing(map)
             for _, v in pairs(map:GetChildren()) do DoStuffWithIds(v) end
         end
     end)
+    if Main.HighlightDefiniteKiras then
+    for _, plr in pairs(game.Players:GetPlayers()) do
+        if plr ~= game.Players.LocalPlayer and plr.Character then
+            local defense = plr.Character.ChildAdded:Connect(function(book)
+                task.wait()
+                if book.Name == "DeathNoteBook" then
+                    table.insert(defkiras, plr.Character)
+                    Main:HighlightSuspectedKira(plr.Character, true)
+                end
+            end)
+            table.insert(connections, defense)
+        end
+    end
+    end
     end
 end
 if game.Workspace:FindFirstChild("Map") then Internal.DoYourThing(game.Workspace:FindFirstChild("Map")) end
