@@ -38,14 +38,16 @@ function Internal:Text(obj, isid, tname, def)
 	    TextLabel.TextSize = 15
 	    BillboardGui.StudsOffset = Vector3.new(0, 0, 0)
 	    TextLabel.Position = UDim2.new(0, 0, 0, -25)
-	    if tname == "Your Id" then TextLabel.TextColor3 = Main.SelfIdProperties.FillColor else TextLabel.TextColor3 = Main.OtherIdProperties.FillColor end
+	    if tname == "Your Id" then TextLabel.TextColor3 = Main.SelfIdProperties.FillColor; TextLabel.TextStrokeColor3 = Main.SelfIdProperties.OutlineColor; else TextLabel.TextColor3 = Main.OtherIdProperties.FillColor; TextLabel.TextStrokeColor3 = Main.OtherIdProperties.OutlineColor; end
 	else
 	    if not def then
 	    TextLabel.Text = tname .. " | Suspected Kira"
 	    TextLabel.TextColor3 = Main.SuspectedKiraProperties.FillColor
+	    TextLabel.TextStrokeColor3 = Main.SuspectedKiraProperties.OutlineColor
 	    else
 	    TextLabel.Text = tname .. " | Definitely Kira"
 	    TextLabel.TextColor3 = Main.DefiniteKiraProperties.FillColor
+	    TextLabel.TextStrokeColor3 = Main.DefiniteKiraProperties.OutlineColor
 	    end
 	    BillboardGui.StudsOffset = Vector3.new(0, 1, 0)
 	    TextLabel.Position = UDim2.new(0, 0, 0, -50)
