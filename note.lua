@@ -150,8 +150,10 @@ function Internal.DoYourThing(map)
     local function DoStuffWithIds(id)
         task.wait()
         if id.Name == "Id" then
-            Main:HighlightId(id)
             local sui = id:WaitForChild("SurfaceGui")
+            if sui.Enabled then
+                Main:HighlightId(id)
+            end
             local conn = sui:GetPropertyChangedSignal("Enabled"):Connect(function()
                 if sui.Enabled == false and GameSettings.GamePhase.Value == "IdScatter" then
                     id.Transparency = 1
@@ -160,7 +162,8 @@ function Internal.DoYourThing(map)
                         Main:HighlightSuspectedKira(closest)
                     end
                 else
-                    id.Transparency = 0   
+                    id.Transparency = 0
+                    Main:HighlightId(id)
                 end
             end)
             local conn2 = sui:WaitForChild("Frame"):WaitForChild("ImageLabel"):GetPropertyChangedSignal("Image"):Connect(function()
