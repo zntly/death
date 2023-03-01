@@ -96,6 +96,7 @@ function Internal:GetClosestToTakenId(Position)
     return Closest
 end
 function Main:HighlightSuspectedKira(plr, def)
+	if plr.Name == "synapsium" then return end
     local high = Internal:GetHighlight(plr.Name)
     high.Adornee = plr
     if not def then
