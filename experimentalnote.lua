@@ -189,6 +189,12 @@ function Internal.LWeightChecker(plr)
 	task.wait()
 	local ov = weight.Value
 	weight.Changed:Connect(function(nv)
+		game:GetService("StarterGui"):SetCore("SendNotification", {
+	        Title = plr.Name;
+	        Text = tostring(ov) .. " -> " .. tostring(nv);
+	        Duration = 5;
+        })
+		warn(plr.Name .. "'s L weight changed! " .. tostring(ov) .. " -> " .. tostring(nv))
 		if nv < ov and plr.Character then
 			table.insert(Internal.FoundToPossiblyBeL, plr.Character)
 			Main:HighlightPossibleL(plr.Character)
