@@ -76,25 +76,12 @@ function Internal:LText(obj, isid, tname)
 	TextLabel.TextStrokeTransparency = 0
 	TextLabel.TextYAlignment = Enum.TextYAlignment.Bottom
 	TextLabel.ZIndex = 15
-	if isid then
-	    obj.SurfaceGui:GetPropertyChangedSignal("Enabled"):Connect(function()
-	        if obj.SurfaceGui.Enabled == false then
-	            BillboardGui:Destroy()
-	        end
-	    end)
-	    TextLabel.Text = tname
-	    TextLabel.TextSize = 15
-	    BillboardGui.StudsOffset = Vector3.new(0, 0, 0)
-	    TextLabel.Position = UDim2.new(0, 0, 0, -25)
-	    if tname == "Your Id" then TextLabel.TextColor3 = Main.SelfIdProperties.FillColor; TextLabel.TextStrokeColor3 = Main.SelfIdProperties.OutlineColor; else TextLabel.TextColor3 = Main.OtherIdProperties.FillColor; TextLabel.TextStrokeColor3 = Main.OtherIdProperties.OutlineColor; end
-	else
 	    TextLabel.Text = tname .. " | Possibly L"
 	    TextLabel.TextColor3 = Main.PossibleLProperties.FillColor
 	    TextLabel.TextStrokeColor3 = Main.PossibleLProperties.OutlineColor
 	    BillboardGui.StudsOffset = Vector3.new(0, 1, 0)
 	    TextLabel.Position = UDim2.new(0, 0, 0, -50)
 	    TextLabel.TextSize = 20
-	end
 	obj.Destroying:Connect(function()
 	    BillboardGui:Destroy()
 	end)
