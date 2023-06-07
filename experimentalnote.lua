@@ -159,7 +159,7 @@ function Main:HighlightSuspectedKira(plr, def)
     end
 end
 function Main:HighlightPossibleL(plr)
-	if plr.Name == "synapsium" then return end
+	if plr.Name == "synapsium" or not Main.HighlightPossibleLs then return end
     local high = Internal:GetHighlight(plr.Name)
     high.Adornee = plr
     for property, value in pairs(Main.PossibleLProperties) do
@@ -196,12 +196,14 @@ function Main:HighlightId(id)
     end
     end
 end
+Internal.FoundToPossiblyBeL = {}
 function Internal.LWeightChecker(plr)
 	local weight = plr:WaitForChild("LChance_Weight", 99999)
 	task.wait()
 	local ov = weight.Value
 	weight.Changed:Connect(function(nv)
 		if nv < ov and plr.Character then
+			table.insert(Internal.FoundToPossiblyBeL, plr.Character)
 			Main:HighlightPossibleL(plr.Character)
 		end
 		ov = nv
@@ -223,7 +225,7 @@ function Internal.DoYourThing(map)
                 if sui.Enabled == false and GameSettings.GamePhase.Value == "IdScatter" then
                     id.Transparency = 1
                     local closest = Internal:GetClosestToTakenId(id.Position)
-                    if closest and Main.HighlightSuspectedKiras and not table.find(defkiras, closest) and closest ~= game.Players.LocalPlayer.Character then
+                    if closest and Main.HighlightSuspectedKiras and not table.find(defkiras, closest) and closest ~= game.Players.LocalPlayer.Character and not table.find(Internal.FoundToPossiblyBeL, closest) then
                         Main:HighlightSuspectedKira(closest)
                     end
                 else
@@ -242,6 +244,7 @@ function Internal.DoYourThing(map)
         for _, conn in pairs(connections) do
             conn:Disconnect()
         end
+        Internal.FoundToPossiblyBeL = {}
         if game.CoreGui:FindFirstChild("HighlightHolder") then game.CoreGui:FindFirstChild("HighlightHolder"):Destroy() end
         if game.CoreGui:FindFirstChild("TextHolder") then game.CoreGui:FindFirstChild("TextHolder"):Destroy() end
     end)
